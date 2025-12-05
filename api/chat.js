@@ -39,7 +39,7 @@ export default async function handler(req, res) {
         const chat = modelInstance.startChat();
 
         // 3. Chama a API Gemini
-        const response = await chat.sendMessage({ message: message });
+        const response = await chat.sendMessage(message);
 
         // 4. Retorna a resposta da IA para o Frontend
         res.status(200).json({ 
