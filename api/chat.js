@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { message } = JSON.parse(req.body);
+        const { message } = req.body;
 
         if (!message) {
             return res.status(400).json({ error: 'Mensagem ausente no corpo da requisição.' });
