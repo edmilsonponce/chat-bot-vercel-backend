@@ -1,17 +1,17 @@
-// CÓDIGO CORRETO (agora usando @google/generative-ai)
+// api/chat.js
+
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-// 1. Inicializa o cliente:
-const ai = new GoogleGenerativeAI({}); 
+// 1. Inicializa o cliente, garantindo que a chave seja lida da variável de ambiente.
+const ai = new GoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY }); 
 const model = 'gemini-2.5-flash';
 
 export default async function handler(req, res) {
-    // Permite que o seu frontend (o site) acesse esta API (CORS)
+    // ... código CORS e Método HTTP
     res.setHeader('Access-Control-Allow-Origin', '*'); 
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-    // Responde a chamadas OPTIONS (necessário para CORS)
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
     }
@@ -21,19 +21,22 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { message } = req.body;
+        // CORRIGIDO: Leitura direta do objeto body
+        const { message } = req.body; 
 
         if (!message) {
             return res.status(400).json({ error: 'Mensagem ausente no corpo da requisição.' });
         }
 
-        // 2. Cria o conteúdo (prompt)
-        const chat = ai.chats.create({
+        // 2. Obtém o modelo e inicia a sessão de chat
+        const modelInstance = ai.getGenerativeModel({
             model: model,
             config: {
                 systemInstruction: "Você é um assistente de chatbot amigável para pequenos negócios. Mantenha as respostas concisas e úteis."
             }
         });
+        
+        const chat = modelInstance.startChat();
 
         // 3. Chama a API Gemini
         const response = await chat.sendMessage({ message: message });
@@ -46,7 +49,7 @@ export default async function handler(req, res) {
     } catch (error) {
         console.error('Erro na API Gemini:', error.message);
         res.status(500).json({ 
-            error: 'Erro interno do servidor. Não foi possível conectar com a IA.' 
+            error: `Erro interno do servidor: ${error.message}` 
         });
     }
 }
