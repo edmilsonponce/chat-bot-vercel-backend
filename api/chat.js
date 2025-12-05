@@ -1,9 +1,11 @@
 // api/chat.js
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from "@google/genai";
+//import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // 1. Inicializa o cliente, garantindo que a chave seja lida da variável de ambiente.
-const ai = new GoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY }); 
+const ai = new GoogleGenAI({apiKey: process.env.GEMINI_API_KEY});
+//const ai = new GoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY }); 
 const model = 'gemini-2.5-flash';
 
 export default async function handler(req, res) {
@@ -29,17 +31,19 @@ export default async function handler(req, res) {
         }
 
         // 2. Obtém o modelo e inicia a sessão de chat
-        const modelInstance = ai.getGenerativeModel({
+        const chat = ai.chats.create({
             model: model,
             config: {
                 systemInstruction: "Você é um assistente de chatbot amigável para pequenos negócios. Mantenha as respostas concisas e úteis."
             }
         });
         
-        const chat = modelInstance.startChat();
+        
 
         // 3. Chama a API Gemini
-        const response = await chat.sendMessage(message);
+        const response = await chat.sendMessage({
+            message: message
+        });
 
         // 4. Retorna a resposta da IA para o Frontend
         res.status(200).json({ 
