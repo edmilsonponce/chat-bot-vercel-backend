@@ -1,9 +1,8 @@
-// api/chat.js
-import { GoogleGenAI } from '@google/genai';
+// CÓDIGO CORRETO (agora usando @google/generative-ai)
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
-// 1. Inicializa o cliente: Ele LERÁ a chave do Gemini de uma variável de ambiente 
-//    chamada GEMINI_API_KEY, que você configurará no Vercel.
-const ai = new GoogleGenAI({}); 
+// 1. Inicializa o cliente:
+const ai = new GoogleGenerativeAI({}); 
 const model = 'gemini-2.5-flash';
 
 export default async function handler(req, res) {
